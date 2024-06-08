@@ -1,0 +1,33 @@
+{
+
+    "WHILE_LOOP": {
+        "description": "Repite cierta acción mientras que la condición resulte verdadera",
+        "label": "repetir mientras %1",
+        "inputs": [
+            {"name": "COND", "type": "bool", "default": "true"}
+        ],
+        "parent": true
+    },
+    "FOR_LOOP": {
+        "description": "Repite cierta acción un número definido de veces",
+        "label": "repetir %1 veces",
+        "inputs": [
+            {"name": "COUNT", "type": "number", "default": "10"}
+        ],
+        "parent": true
+    },
+    "MOVE_UNITS": {
+        "description": "Mover el cierta cantidad de unidades",
+        "label": "mover %1 unidades",
+        "inputs": [
+            {"name": "AMOUNT", "type": "number", "default": "10"}
+        ]
+    },
+    "ROTATE_DEGREES": {
+        "description": "Rotar en sentido antihorario cierto ángulo",
+        "label": "rotar %1 grados",
+        "inputs": [
+            {"name": "AMOUNT", "type": "number", "default": "15"}
+        ]
+    },
+}
