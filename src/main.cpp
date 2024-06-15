@@ -14,13 +14,13 @@ using std::string;
 using std::format;
 
 struct Input {
-    const char* const name;
-    const char* const type;
-    const char* const defaultValue;
+    const string name;
+    const string type;
+    const string defaultValue;
 
-    Input(const char* name,
-          const char* type,
-          const char* defaultValue) :
+    Input(const string name,
+          const string type,
+          const string defaultValue) :
           name(name),
           type(type),
           defaultValue(defaultValue) {}
@@ -36,9 +36,9 @@ struct Output {
 struct Block {
     const int id = -1;
 
-    const char* const name;
-    const char* const description;
-    const char* const label;
+    const string name;
+    const string description;
+    const string label;
     const bool start;
     const bool end;
     const bool childrenAllowed;
@@ -71,9 +71,10 @@ std::ostream& operator<<(std::ostream& os, const Block& b) {
 class BlockBuilder {
     int id = -1;
 
-    const char* name;
-    const char* description;
-    const char* label;
+public:
+    string name;
+    string description;
+    string label;
     bool start = false;
     bool end = false;
     bool childrenAllowed = false;
@@ -81,11 +82,14 @@ class BlockBuilder {
     vector<Input>    inputs;
     optional<Output> output;
 
-public:
-    BlockBuilder(const char* name, const char* description) : name(name), description(description) {}
+    BlockBuilder(const char* name) : name(name) {}
 
     BlockBuilder& withLabel (const char* text) {
         label = text;
+        return *this;
+    }
+    BlockBuilder& setDescription (const char* text) {
+        description = text;
         return *this;
     }
     BlockBuilder& isStart () {
@@ -148,11 +152,15 @@ public:
 int main() {
     std::ifstream f("example_collection.json");
     json blockJson = json::parse(f);
+    vector<Block> blocks;
 
     for (auto &[name, block] : blockJson.items()) {
-        BlockBuilder(name.c_str()
+        BlockBuilder builder(name.c_str());
+        block.at("description").get_to(builder.description);
+        block.at("label").get_to(builder.label);
+        blocks.push_back(builder.finish())
     }
-
+/*
     BlockCollection blocks ({
         BlockBuilder("WHILE_LOOP", "Repite cierta acción mientras que la condición resulte verdadera")
             .withLabel("repetir mientras %1")
@@ -168,7 +176,7 @@ int main() {
         BlockBuilder("ROTATE_DEGREES", "Rotar en sentido antihorario cierto ángulo")
             .withLabel("rotar %1 grados")
             .addInput({"AMOUNT", "number", "15"})
-    });
+    });*/
 
     std::cout << blocks.blocks[1] << std::endl;
 }
