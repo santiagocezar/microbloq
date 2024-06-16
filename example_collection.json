@@ -29,5 +29,5 @@
         "inputs": [
             {"name": "AMOUNT", "type": "number", "default": "15"}
         ]
-    },
+    }
 }

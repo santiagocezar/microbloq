@@ -1,165 +1,13 @@
 #include <iostream>
-#include <optional>
-#include <string>
-#include <vector>
-#include <format>
-#include <fstream>
-#include <nlohmann/json.hpp>
 
-using json = nlohmann::json;
 
-using std::optional;
-using std::vector;
-using std::string;
-using std::format;
+#include "block/library.hpp"
 
-struct Input {
-    const string name;
-    const string type;
-    const string defaultValue;
 
-    Input(const string name,
-          const string type,
-          const string defaultValue) :
-          name(name),
-          type(type),
-          defaultValue(defaultValue) {}
-};
-
-struct Output {
-	const char* const type;
-
-    Output(const char* type) :
-           type(type) {}
-};
-
-struct Block {
-    const int id = -1;
-
-    const string name;
-    const string description;
-    const string label;
-    const bool start;
-    const bool end;
-    const bool childrenAllowed;
-
-    const vector<Input>    inputs;
-    const optional<Output> output;
-};
-
-std::ostream& operator<<(std::ostream& os, const Block& b) {
-    string label(b.label), replaced, replaceWith;
-    size_t pos = 0, input = 1;
-    while (true) {
-        replaced = format("%{}", input);
-        pos = label.find(replaced);
-        if (pos == string::npos) break;
-        if (input > b.inputs.size()) break;
-
-        std::cout << "pos: " << pos << "\n";
-
-        label.replace(
-            pos, replaced.size(),
-            replaceWith = format("({})", b.inputs[input - 1].name)
-        );
-        input ++;
-    }
-    os << label;
-    return os;
-}
-
-class BlockBuilder {
-    int id = -1;
-
-public:
-    string name;
-    string description;
-    string label;
-    bool start = false;
-    bool end = false;
-    bool childrenAllowed = false;
-
-    vector<Input>    inputs;
-    optional<Output> output;
-
-    BlockBuilder(const char* name) : name(name) {}
-
-    BlockBuilder& withLabel (const char* text) {
-        label = text;
-        return *this;
-    }
-    BlockBuilder& setDescription (const char* text) {
-        description = text;
-        return *this;
-    }
-    BlockBuilder& isStart () {
-        start = true;
-        return *this;
-    }
-    BlockBuilder& isEnd () {
-        end = true;
-        return *this;
-    }
-    BlockBuilder& allowsChildren () {
-        childrenAllowed = true;
-        return *this;
-    }
-    BlockBuilder& addInput (Input input) {
-        inputs.emplace_back(input);
-        return *this;
-    }
-    BlockBuilder& withOutput (const char* type) {
-        output.emplace(Output(type));
-        return *this;
-    }
-    Block finish () const {
-        return {
-            .id = id,
-            .name = name,
-            .label = label,
-            .start = start,
-            .end = end,
-            .childrenAllowed = childrenAllowed,
-            .inputs = inputs,
-            .output = output,
-        };
-    }
-};
-
-template<size_t size>
-vector<Block> finishBlocks(const BlockBuilder (& builders)[size]) {
-    vector<Block> blocks;
-    blocks.reserve(size);
-    for (size_t i = 0; i < size; i++) {
-        auto block = builders[i].finish();
-        std::cout << "block " << block.label << " has these inputs:\n";
-        for (auto &input : block.inputs) {
-            std::cout << "  " << input.name << ": " << input.type << "\n";
-        }
-        blocks.push_back(block);
-    }
-    return blocks;
-}
-
-class BlockCollection {
-public:
-    const vector<Block> blocks;
-
-    template<size_t size>
-    BlockCollection(const BlockBuilder (& builders)[size]) : blocks(finishBlocks<size>(builders)) {}
-};
 
 int main() {
-    std::ifstream f("example_collection.json");
-    json blockJson = json::parse(f);
-    vector<Block> blocks;
+    auto lib = BlockLibrary::fromFile("example_collection.json");
 
-    for (auto &[name, block] : blockJson.items()) {
-        BlockBuilder builder(name.c_str());
-        block.at("description").get_to(builder.description);
-        block.at("label").get_to(builder.label);
-        blocks.push_back(builder.finish())
-    }
 /*
     BlockCollection blocks ({
         BlockBuilder("WHILE_LOOP", "Repite cierta acción mientras que la condición resulte verdadera")
@@ -178,5 +26,5 @@ int main() {
             .addInput({"AMOUNT", "number", "15"})
     });*/
 
-    std::cout << blocks.blocks[1] << std::endl;
+    std::cout << lib.blocks[1] << std::endl;
 }
