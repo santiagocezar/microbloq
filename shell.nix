@@ -5,12 +5,15 @@ let
 		rev = "503ea6accc0ce6af683a207a9a02de4a9bf0bedc";
 	});
 in pkgs.mkShell {
+	nativeBuildInputs = with pkgs; [
+		pkg-config
+		meson
+		ninja
+		cmake
+	];
 	buildInputs = with pkgs; [
 		lager
 		qt6Packages.qtbase
-		meson
-		ninja
 		nlohmann_json
-		pkg-config
 	];
 }

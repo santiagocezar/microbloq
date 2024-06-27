@@ -1,8 +1,8 @@
 #include "library.hpp"
 
 template<size_t size>
-BlockLibrary BlockLibrary::fromBuilders(const Block::Builder (& builders)[size]) {
-    std::vector<Block> blocks;
+BlockLibrary BlockLibrary::fromBuilders(const BlockType::Builder (& builders)[size]) {
+    std::vector<BlockType> blocks;
     blocks.reserve(size);
     for (size_t i = 0; i < size; i++) {
         auto block = builders[i].finish();

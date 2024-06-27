@@ -2,7 +2,7 @@
 
 #include <format>
 
-std::ostream& operator<<(std::ostream& os, const Block& b) {
+std::ostream& operator<<(std::ostream& os, const BlockType& b) {
     std::string label(b.label), replaced, replaceWith;
     size_t pos = 0, input = 1;
     while (true) {

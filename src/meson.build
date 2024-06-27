@@ -3,3 +3,4 @@ src += files(
 )
 
 subdir('block')
+subdir('workspace')

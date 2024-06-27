@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <string>
 #include <optional>
@@ -15,7 +17,7 @@ struct Input {
           defaultValue(defaultValue) {}
 };
 
-struct Block {
+struct BlockType {
     const std::string id;
     const std::string description;
     const std::string label;
@@ -27,7 +29,7 @@ struct Block {
     const std::optional<std::string> outputType;
 
     class Builder  {
-        friend Block;
+        friend BlockType;
 
         inline Builder& setID (const char* text) {
             id = text;
@@ -84,7 +86,7 @@ struct Block {
             outputType.emplace(type);
             return *this;
         }
-        inline Block build () const {
+        inline BlockType build () const {
             return {
                 .id = id,
                 .description = description,
@@ -107,4 +109,4 @@ struct Block {
     }
 };
 
-std::ostream& operator<<(std::ostream& os, const Block& b);
+std::ostream& operator<<(std::ostream& os, const BlockType& b);

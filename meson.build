@@ -15,12 +15,14 @@ project('microbloq', 'cpp',
 #translations = qt6.compile_translations(ts_files : 'myTranslation_fr.ts', build_by_default : true)
 
 json = dependency('nlohmann_json')
+lager = dependency('Lager')
+immer = dependency('Immer')
 
 src = []
 
 subdir('src')
 
-executable('microbloq', src, dependencies : json)
+executable('microbloq', src, dependencies : [json, lager, immer], include_directories : 'src')
 #moc_files,
 #           include_directories: inc,
 #            dependencies : qt6_dep)

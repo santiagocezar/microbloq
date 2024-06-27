@@ -1,69 +1,39 @@
-#include <cstddef>
 #include <iostream>
-#include <vector>
-#include <map>
-#include <set>
+
+#include <lager/store.hpp>
+#include <lager/event_loop/manual.hpp>
 
 #include "block/library.hpp"
 
-// this should be the max size_t value
-constexpr size_t UNLINKED = -1;
-
-struct Link {
-    size_t prev = UNLINKED;
-    size_t next = UNLINKED;
-};
-
-class Workspace {
-    struct B { size_t id; };
-
-    std::vector<B> blocks;
-
-    std::map<size_t, Link> links;
-
-    std::set<size_t> roots;
-
-    public:
-
-    const std::set<size_t>& getRoots() {
-        return roots;
-    }
-    const std::vector<B>& getBlocks() {
-        return blocks;
-    }
-    const std::map<size_t, Link>& getLinks() {
-        return links;
-    }
-
-    size_t add(B block, size_t after = UNLINKED) {
-        block.id = blocks.size();
-        blocks.push_back(block);
-        if (after == UNLINKED) {
-            roots.insert(block.id);
-        } else {
-            insert(after, block.id);
-        }
-        return block.id;
-    }
-
-    void insert(size_t after, size_t block) {
-        auto last = links[after].next;
-        links[after].next = block;
-        links[block].prev = after;
-
-        while (links[block].next != UNLINKED) {
-            block = links[block].next;
-        }
-        links[block].next = last;
-    }
-};
-
+#include "workspace/model.hpp"
+#include "workspace/actions.hpp"
 
 int main() {
+    auto store = lager::make_store<workspace::Action>(
+        workspace::Model{},
+        lager::with_manual_event_loop{});
+
+    watch(store, [] (auto m) { m.print(); });
+
     auto lib = BlockLibrary::fromFile("example_collection.json");
 
-    Workspace w;
+    store.dispatch(workspace::AddAction {
+        .block = lib.blocks[1]
+    });
+    /*
+    auto root1 = w1.add({});
+    auto item = w1.add({}, w1.add({}, root1));
 
+    auto w2 = w1;
+
+    w2.link(item, root1);
+
+    w1.sanityCheck();
+    w2.sanityCheck();
+
+    w1.print();
+    w2.print();*/
+    /*
     auto col1 = w.add({});
     col1 = w.add({}, col1);
     col1 = w.add({}, col1);
@@ -77,20 +47,9 @@ int main() {
     col2 = w.add({}, col2);
     col2 = w.add({}, col2);
 
-    w.insert(after, root2);
+    w.link(root2, after);
+    w.link(col2, after);*/
 
-    auto roots = w.getRoots();
-    auto blocks = w.getBlocks();
-    auto links = w.getLinks();
-    size_t i = 1;
-    for (auto &root : roots) {
-        std::cout << "root " << i++ << std::endl;
-        auto blockID = root;
-        while (blockID != UNLINKED) {
-            std::cout << blockID << std::endl;
-            blockID = links[blockID].next;
-        }
-    }
 
 /*
     BlockCollection blocks ({
