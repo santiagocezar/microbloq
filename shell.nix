@@ -6,10 +6,12 @@ let
 	});
 in pkgs.mkShell {
 	nativeBuildInputs = with pkgs; [
+		libclang.python
 		pkg-config
 		meson
 		ninja
 		cmake
+		clang-tools
 	];
 	buildInputs = with pkgs; [
 		lager

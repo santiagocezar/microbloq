@@ -4,3 +4,4 @@ src += files(
 
 subdir('block')
 subdir('workspace')
+subdir('ui')

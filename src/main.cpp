@@ -6,7 +6,22 @@
 #include "workspace/actions.hpp"
 #include "workspace/model.hpp"
 
-int main() {
+#include <QApplication>
+#include "ui/mainwindow.h"
+#include "ui/blockwidget.h"
+
+int main(int argc, char **argv) {
+	QApplication app (argc, argv);
+	MainWindow win;
+	BlockWidget bw;
+
+	win.layout()->addWidget(&bw);
+
+	win.show();
+
+	return app.exec();
+
+	/*
 	auto store = lager::make_store<workspace::Action>(
 		workspace::Model{}, lager::with_manual_event_loop{});
 
