@@ -4,10 +4,12 @@ ui += files(
 
 moc_headers += files(
     'mainwindow.h',
-    'blockwidget.h'
+    'blockparts.h',
+    'blockwrapper.h'
 )
 
 src += files(
     'mainwindow.cpp',
-    'blockwidget.cpp'
+    'blockparts.cpp',
+    'blockwrapper.cpp'
 )

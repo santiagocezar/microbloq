@@ -8,12 +8,18 @@
 
 #include <QApplication>
 #include "ui/mainwindow.h"
-#include "ui/blockwidget.h"
+#include "ui/blockparts.h"
+#include "ui/blockwrapper.h"
 
 int main(int argc, char **argv) {
 	QApplication app (argc, argv);
 	MainWindow win;
-	BlockWidget bw;
+	BlockWrapper bw;
+	BlockParts bw1(BlockParts::Notch, BlockParts::Offset);
+	BlockParts bw2(BlockParts::Offset, BlockParts::Notch);
+
+	bw.layout.addWidget(&bw1);
+	bw.layout.addWidget(&bw2);
 
 	win.layout()->addWidget(&bw);
 
