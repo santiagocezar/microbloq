@@ -15,8 +15,8 @@ int main(int argc, char **argv) {
 	QApplication app (argc, argv);
 	MainWindow win;
 	BlockWrapper bw;
-	BlockParts bw1(BlockParts::Notch, BlockParts::Offset);
-	BlockParts bw2(BlockParts::Offset, BlockParts::Notch);
+	BlockParts bw1(BlockParts::Notched, BlockParts::Offset | BlockParts::Notched);
+	BlockParts bw2(BlockParts::Offset | BlockParts::Notched, BlockParts::Notched);
 
 	bw.layout.addWidget(&bw1);
 	bw.layout.addWidget(&bw2);
